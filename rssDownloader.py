@@ -9,4 +9,6 @@ if len(sys.argv) == 2 and sys.argv[1].endswith('.rss'):
     for item in root.findall('./channel/item'):
         for child in item:
             if child.tag == 'title':
-                print(child.text)
+                print('Downloading episode: ' + child.text)
+            if child.tag == '{http://search.yahoo.com/mrss/}content' and child.attrib['type'] == 'audio/mpeg':
+                print(child.attrib['url'])
