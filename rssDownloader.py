@@ -26,6 +26,14 @@ if len(sys.argv) == 2 and sys.argv[1].endswith('.rss'):
             print('Downloading episode: ' + child.text)
             
         if child.tag.endswith('content') and child.attrib['type'] == 'audio/mpeg':
-            epReq = requests.get(child.attrib['url'])
-            with open(episodeTitle, wb) as f:
+            try:
+                epReq = requests.get(child.attrib['url'])
+            except requests.exceptions.Timeout: 
+                print('Retrying download of episode: ' + child.text)
+                epReq = requests.get(child.attrib['url'])
+            except requests.exceptions.RequestException as e:
+                raise SystemExit(e)
+            
+            with open(episodeTitle, 'wb') as f:
                 f.write(epReq.content)
+            
